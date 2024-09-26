@@ -8,82 +8,78 @@ double getTime(){
  }
 
 
-void Cam::print(){
-    for (const auto& pair : number) {
-        std::cout << "Key: " << pair.second.quantity << ", Value: ";
+void Camera::print(){
+    for (const auto& item : number) {
+        auto key = item.first;
+        auto data = item.second;
+
+        std::cout << "Number: " << data.number << std::endl;
+        std::cout << "Quantity: " << data.quantity << std::endl;
+        std::cout << "Time: ";
+        for (double t : data.time) {
+            std::cout << t << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Time Middle: " << data.time_middle << std::endl;
+        std::cout << "Camera ID: ";
+        for (const auto& pair : data.cameraId) {
+            std::cout << pair.first << " -> " << pair.second << ", ";
+        }
+        std::cout << std::endl;
+        std::cout << "Type: " << data.type << std::endl;
+        std::cout << "Axle: " << data.axle << std::endl;
+        std::cout << "Change: " << (data.change ? "true" : "false") << std::endl;
+        std::cout << "Time Mean: " << data.timeMean << std::endl;
+        std::cout << std::endl;
     }
 }
 
-void Cam::updateJson(const nlohmann::json& json, std::vector<std::vector<int>>& dataAxleNum) {
-   /*
-   // uskrData.clear();
-    for (const auto& uskr : json["number_uskr"]) {
-        UskrData data;
-        data.number = uskr["number"];
-        data.quantity = uskr["quantity"];
-        for (const auto& lastTime : uskr["time"])
-            data.time.push_back(lastTime);
-        for (const auto& item : uskr["cam"].items())
-        {
-            auto key = item.key();
-            auto value = item.value();
-            data.cameraId[key]= value;
-       }
-        //data.time_middle = uskr["time_midle"];
-        data.type = uskr["type"];
-        data.axle = uskr["axle"];
-        data.change = uskr["change"];
-        data.time_mean = uskr["time_mean"];
-        uskrData.push_back(data);
-    }
-    */
+void Camera::updateJson(const nlohmann::json& json, std::vector<std::vector<int>>& dataAxleNum) {
 
     for (const auto& value : json["info"]["number"]) {
 
          if (number.count(value["info"])>0){
 
              ++number[value["info"]].quantity;
-             //for (const auto& lastTime : value["time"])
-               // data.time.push_back(lastTime);
-           //  for (const auto& item :value["cam"].items())
-            // {
-              //  auto key = item.key();
-               // auto value = item.value();
-               // data.cameraId[key]= value;
-             //}
-            // data.type = value["type"];
-             //data.axle = value["axle"];
-             //data.change = value["change"];
-           //  data.time_mean = value["time_mean"];
-            // number[value["info"]]=data;
-
+            // number[value["info"]].time.push_back(json["time"]);
+             if (number[value["info"]].cameraId.count(json["id"])>0)
+                ++number[value["info"]].cameraId[json["id"]];
+             else
+                 number[value["info"]].cameraId[json["id"]]=1;
+             number[value["info"]].change = true;
+             number[value["info"]].timeMean = (static_cast<double>(json["time"])+number[value["info"]].timeMean) / 2.0;
          }
          else {
-
             UskrData data;
+            data.number = value["info"];
             data.quantity = 1;
             data.time.push_back(json["time"]);
             data.cameraId[json["id"]] = 1;
-
             NumberInfo axleType = qaxl_number(dataAxleNum,value["info"]);
             data.type = axleType.typeWagon;
             data.axle = axleType.axle;
-            //data.change = value["change"];
-            data.time_mean = json["time"];
+            data.change = true;
+            data.timeMean = json["time"];
             number[value["info"]]=data;
          }
     }
 
     for (const auto& value : json["info"]["coupl"]) {
+
+
+
+
+
+
         std::cout<<value<<" \n";
     }
     for (const auto& value : json["info"]["mark"]) {
         std::cout<<value<<" \n";
     }
-     std::cout<<"value"<<" \n";
+
 }
 
-void Cam::takePicture() {
+void Camera::takePicture() {
     // implementation
 }
 
@@ -120,7 +116,7 @@ NumberInfo qaxl_number(const std::vector<std::vector<int>>& data, const std::str
             row[1] >= std::stoi(num.substr(0, 6)) &&
             row[2] <= std::stoi(num.substr(6,1)) &&
             row[3] >= std::stoi(num.substr(6,1))) {
-           // if (list_index_vagon_articulated.count(row[4])) {
+            // if (list_index_vagon_articulated.count(row[4])) {
 
             AxleType.typeWagon = 0;  //list_index_vagon_articulated.at(row[4]);
             //}

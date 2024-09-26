@@ -1,0 +1,278 @@
+{
+
+	"server":{
+
+
+			"1":{
+				"gpu": 0.14,
+				"port": 5572,
+				"CUDA_VISIBLE_DEVICES":"0"
+
+			},
+			"2":{
+				"gpu": 0.14,
+				"port": 5573,
+				"CUDA_VISIBLE_DEVICES":"0"
+
+			},
+			"3":{
+				"gpu": 0.14,
+				"port": 5574,
+				"CUDA_VISIBLE_DEVICES":"0"
+
+			},
+			"4":{
+				"gpu": 0.14,
+				"port": 5575,
+				"CUDA_VISIBLE_DEVICES":"0"
+
+			}
+		},
+
+	"client":{
+
+			"4":{
+
+					"method_recogntion":1,
+					"port": [5572,5573,5574,5575],
+					"http":"http://192.168.6.103/mjpg/1/video.mjpg?compression=5&fps=25",
+					"rtsp": "rtsp://admin:skpipwd123@192.168.6.103:554/cam/realmonitor?channel=1&subtype=0",
+					"id":4,
+					"control_place_num": 300,
+					"index_send":1,
+					"fl_axle":[false,false],
+					"trust_num": 0.8,
+					"coordinate_dso":970,
+                    "trust_sel_num": [1, 1],
+					"box_areas": [0,720,0, 1280],
+                    "boxframe": [0, 720,0,1280],
+                    "box_rail_way": [146,314,50, 1080],
+                    "resize_rail_way": [ 224,128],
+                    "flag_cut_rail": true,
+                    "reversed":true,
+                    "resize_frame": [264,64 ],
+                    "resize_num": [200,40],
+                    "rs_frame": [1280,720],
+                    "fl_rs_frame": false,
+                    "box_cut_derection": [340,400,530,700],
+                    "sift_frame_whc": [ 20,1100, 5,240,0.1, 0.7],
+                    "sift_frame_whc_pass": [10,1100,10,1140,0.6,1.5],
+                    "resize_frame_unet": [160, 256,5],
+                    "sift_rails_whc": [ 30,400,35, 315,0.5,2.9],
+					"name":"STU1",
+					"shm":14104,
+					"send_alive":"STU1_up_103",
+					"position": "up",
+					"limit_dso":[200,600]
+			},
+
+			"3":{
+					"method_recogntion":0,
+					"port": [5572,5573,5574,5575],
+					"http":"http://192.168.6.101/mjpg/1/video.mjpg?compression=5&fps=25",
+					"rtsp":"rtsp://root:6tgbBGT^@192.168.6.101:554/cam/realmonitor?channel=1&subtype=0",
+	      			"id":3,
+	      			"index_send":1,
+	      			"fl_axle":[false,false],
+	      			"rs_frame": [ 1280, 720],
+                    "fl_rs_frame": false,
+                    "coordinate_dso": 250,
+                    "range_val_dst": [ 5,8,20],
+                    "flag_on_log": false,
+                    "trust_num": 0.8,
+                    "trust_sel_num": [1, 1],
+                    "reversed":true,
+                    "boxframe": [0,720,0,1280],
+                    "box_rail_way": [[410,580,100,1000],[410,580,100,1000]],
+                    "box_area_wheel": [[350, 592, 0, 1280, 128, 64 ], [ 335, 592, 0, 1280, 128, 64 ]],
+
+                    "resize_frame": [264, 64],
+                    "resize_num": [200, 40],
+                    "control_place_num": 200,
+                    "resize_rail_way": [224, 128],
+                    "resize_frame_unet": [ 192, 256, 5 ],
+                    "sift_frame_whc": [10, 256, 5, 100, 0.1, 0.7],
+                    "sift_rails_whc": [20, 100, 25, 150, 0, 420.0 , 0, 460],
+                    "sift_wheels": [15, 70, 35, 80, 0.0, 1000.0, 9.375, 5.156, 5, 115],
+					"name":"STU1",
+					"shm": 10041,
+					"send_alive":"STU1_up_101",
+					"position": "low",
+					"limit_dso":[200,600]
+
+				} ,
+
+
+			"1":{
+
+					"method_recogntion":1,
+					"port": [5572,5573,5574,5575],
+					"http":"http://192.168.6.102/mjpg/1/video.mjpg?compression=5&fps=25",
+					"rtsp": "rtsp://root:6tgbBGT^@192.168.6.102:554/cam/realmonitor?channel=1&subtype=0",
+					"id":1,
+					"control_place_num": 300,
+					"index_send":1,
+					"fl_axle":[false,false],
+					"trust_num": 0.8,
+					"coordinate_dso":970,
+                    "trust_sel_num": [1, 1],
+					"box_areas": [0,720,0, 1280],
+                    "boxframe": [0, 720,0,1280],
+                    "box_rail_way": [146,314,50, 1080],
+                    "resize_rail_way": [ 224,128],
+                    "flag_cut_rail": true,
+                    "reversed":false,
+                    "resize_frame": [264,64 ],
+                    "resize_num": [200,40],
+                    "rs_frame": [1280,720],
+                    "fl_rs_frame": false,
+                    "box_cut_derection": [340,400,530,700],
+                    "sift_frame_whc": [ 20,1100, 5,240,0.1, 0.7],
+                    "sift_frame_whc_pass": [10,1100,10,1140,0.6,1.5],
+                    "resize_frame_unet": [160, 256,5],
+                    "sift_rails_whc": [ 30,400,35, 315,0.5,2.9],
+					"name":"STU1",
+					"shm":14103,
+					"send_alive":"STU1_low_102",
+					"position": "up",
+					"limit_dso":[600,1000]
+			},
+			"2":{
+					"method_recogntion":0,
+					"port": [5572,5573,5574,5575],
+					"http":"http://192.168.6.104/mjpg/1/video.mjpg?compression=5&fps=25",
+					"rtsp":"rtsp://root:6tgbBGT^@192.168.6.104:554/cam/realmonitor?channel=1&subtype=0",
+	      			"id":2,
+	      			"index_send":1,
+	      			"fl_axle":[false,false],
+	      			"rs_frame": [ 1280, 720],
+                    "fl_rs_frame": false,
+                    "coordinate_dso": 970,
+                    "range_val_dst": [ 5,8,20],
+                    "flag_on_log": false,
+                    "trust_num": 0.8,
+                    "trust_sel_num": [1, 1],
+                    "reversed":false,
+                    "boxframe": [0,720,0,1280],
+                    "box_rail_way": [[330,500,300,900],[330,500,300,900]],
+                    "box_area_wheel": [[329, 592, 0, 1280, 128, 64 ], [ 329, 592, 0, 1280, 128, 64 ]],
+
+                    "resize_frame": [264, 64],
+                    "resize_num": [200, 40],
+                    "control_place_num": 200,
+                    "resize_rail_way": [224, 128],
+                    "resize_frame_unet": [ 192, 256, 5 ],
+                    "sift_frame_whc": [10, 256, 5, 100, 0.1, 0.7],
+                    "sift_rails_whc": [15, 150, 25, 178, 0, 120.0 , 0, 160],
+                    "sift_wheels": [15, 70, 35, 80, 0.0, 1000.0, 9.375, 5.156, 5, 115],
+					"name":"STU1",
+					"shm": 100451,
+					"send_alive":"STU1_low_104",
+					"position": "low",
+					"limit_dso":[600,1000]
+
+				}
+		},
+	"taskmaster":{"shm":10234545558},
+
+	"module":{
+
+			"STU1":{
+				"dso":[3004,3000,3006,3002],
+				"c_dso":[670],
+				"resize_annotation_x_y":[1 ,1],
+				"info_dso":{"3004":"1_1","3000":"0_1","3006":"1_0","3002":"0_0"},
+				"main_rail":3004,
+				"num_dev":[3002,0],
+				"num_even":[[203,"rco"], [1017, "rtds"]],
+				"type_dso":"DSO_P",
+				"name": "STU1",
+				"dso_dir_index":[1],
+				"enterance_stu": true,
+				"floodlight":{
+					"0":["http://192.168.6.33/protect/rb0f.cgi","admin","admin"],
+					"1":["http://192.168.6.33/protect/rb0n.cgi","admin","admin"]
+
+				}
+			}
+
+
+		},
+
+	"logic_sorted":{
+			"1":{
+				"ip_port_in":"tcp://127.0.0.1:5558",
+				"ip_port_out":"tcp://127.0.0.1:5553"
+
+				}
+
+		},
+
+	"nats":{
+			"1":{
+				"nats_ip":["192.168.6.11","192.168.6.12","192.168.6.13" ],
+				"nats_port": 4222,
+				"nats_id": 17248,
+				"cluster" : "SKPI",
+				"zmq_in": "192.168.6.13:5580",
+				"zmq_out":"192.168.6.13:5581",
+				"rc_groups":[  "DataSkpi", "model_iu","uskr_kgm_out"],
+				"publ_grp": "DataSkpi",
+				"asu_group": [],
+				"nats_id_sender": 15248,
+				"ip_controller": [ "192.168.6.13"],
+				"type":"main"
+
+			}
+		},
+
+	"shm": 11787852048,
+	"update":{},
+
+	"net":{
+		"1":{
+	    	    "yolov5s_couple_weights": "./net/yolov5s_couple_weights.pt",
+	            "yolov5s_nums_0_9_weights": "./net/yolov5s_nums_0_9_weights.pt",
+	            "yolov5s_couple_class": "./net/yolov5s_couple_class.yaml",
+	            "yolov5s_nums_0_9_class": "./net/yolov5s_nums_0_9_class.yaml",
+	            "load_weights_number": "./net/NUM400.h5",
+	            "data_number": [11, 40, 200],
+	            "load_weights_frame_upCam": "./net/igor_4_class_up.h5",
+	            "data_upCam": [5,160, 256],
+	            "load_weights_frame_lowCam": "./net/igor_4_class_low.h5",
+	            "data_lowCam": [ 5, 192, 256],
+	            "load_weights_temloc": "./net/igor_13_class_num.h5",
+	            "load_weights_couple":"./net/batch_norm_16032023.h5",
+	            "data_temloc": [ 14, 40, 200],
+	            "load_weights_rail": "./net/2_class_ver_1.h5",
+	            "data_rail": [3, 128, 224],
+	            "data_rail_new": [2, 128, 224],
+	            "data_yolo":[416,416],
+	            "data_axl": [2, 64, 128],
+	            "load_weights_axl": "./net/OS160.h5",
+	            "model_path": "./net/yolo_final.h5",
+			    "anchors_path": "./net/yolo_anchors.txt",
+			    "classes_path": "./net/4_CLASS_test_classes.txt",
+			    "best_weights":"./net/last.pt",
+			    "best_classes":"./net/for_best.yaml",
+			    "flag_use_yolo":true,
+			    "flag_use_unet":true,
+			    "yolov8":"./net/best1.engine",
+			    "weigths_mark":"./net/lastmark.engine",
+			    "data_mark":"./net/datamark.yaml"
+
+
+
+	        }
+		},
+
+	"rsunc":{
+			"1":{
+				"adsress_copy_file":"./debugVideo"
+			}
+
+
+		}
+
+}
+
