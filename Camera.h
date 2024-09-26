@@ -23,6 +23,47 @@ struct UskrData {
     double timeMean;
 };
 
+struct Coordinate{
+	int xMin;
+	int yMin;
+	int xMax;
+	int yMax;
+};
+
+struct Frame{
+	double time;
+	int id;
+	Coordinate coordinate;
+	std::string typeRecognition;
+	double probabilityFrame;
+};
+
+
+struct UskrCouple{
+	double time;
+	double probability;
+	std::vector<int> camera;
+	std::vector<std::map<Frame>> frame;
+	double timeMin;
+	double timeMax;
+	double limit;
+	int cameraMiddle;
+	double middlePosition;
+};
+
+
+struct UskrMark {
+    std::string number;
+    int quantity;
+    std::vector<double> time;
+    double time_middle;
+    std::map<int, int> cameraId;
+    int type;
+    int axle;
+    bool change;
+    double timeMean;
+};
+
 
 class Camera {
 private:
