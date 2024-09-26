@@ -34,7 +34,7 @@ int main() {
            //cam.updateJson(jsonData);
         }
         else if (jsonData["info"]=="uskr_dso")
-            sensor.triggerAlarm();  // Датчик срабатывает
+            sensor.update(jsonData);  // Датчик срабатывает
         else if (jsonData["info"]=="rco")
             circuit.activate();
         else if (jsonData["info"]=="uskr_lasers")
@@ -44,11 +44,6 @@ int main() {
 
         //send_diagnostic()
         std::cout << "ECHO is alive" <<std::endl;
-
-
-
-
-
 
 
 

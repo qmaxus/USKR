@@ -31,7 +31,7 @@ private:
     std::map<std::string, UskrData> number;
 public:
     Camera(Mediator* med, const std::string& n) : mediator(med), name(n) {}
-
+    void deleted(double timeEnd);
     void update(const nlohmann::json& json);
     void print();
 };

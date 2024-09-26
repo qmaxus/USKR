@@ -40,7 +40,16 @@ void Camera::update(const nlohmann::json& json) {
     mediator->notify(name, "MotionDetected");
 }
 
+void Camera::deleted(double timeEnd){
+    for (auto it = number.begin(); it != number.end();) {
+        if (it->second.timeMean < timeEnd) {
+            it = number.erase(it);
+        } else {
+            ++it;
+        }
+    }
 
+}
 
 void Camera::print() {
     for (const auto& item : number) {
