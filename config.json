@@ -1,0 +1,22 @@
+{
+    "cameras": [
+        {
+            "name": "Camera1"
+        }
+    ],
+    "sensors": [
+        {
+            "name": "Sensor1"
+        }
+    ],
+    "circuits": [
+        {
+            "name": "Circuit1"
+        }
+    ],
+    "lasers": [
+        {
+            "name": "Laser1"
+        }
+    ]
+}

@@ -11,7 +11,7 @@ while True:
     print(msg)
     time.sleep(1)
 """
-import zmq
+import zmqlsls
 import json
 import time
 context = zmq.Context()
