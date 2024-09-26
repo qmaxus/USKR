@@ -35,10 +35,10 @@ public:
     void notify(const std::string& sender, const std::string& event) override {
         if (event == "MotionDetected") {
             std::cout << "Mediator reacts to motion detection." << std::endl;
-            camera->takePicture();
-            sensor->triggerAlarm();
-            circuit->activate();
-            laser->fire();
+            camera->print();
+            //sensor->triggerAlarm();
+            //circuit->activate();
+            //laser->fire();
         } else if (event == "AlarmTriggered") {
             std::cout << "Mediator reacts to alarm trigger." << std::endl;
             // Дополнительные действия при срабатывании тревоги

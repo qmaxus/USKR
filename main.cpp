@@ -6,6 +6,7 @@
 #include "Laser.h"
 #include "ConcreteMediator.h"
 #include "ConfigLoader.h"
+#include "zmq_receiver.h"
 
 
 int main() {
@@ -22,34 +23,24 @@ int main() {
     // Устанавливаем компоненты в посредник
     ConcreteMediator::getInstance().setComponents(&camera, &sensor, &circuit, &laser);
 
-    //add disconnect
-    zmq::context_t context(1);
-    zmq::socket_t socket(context, zmq::socket_type::pull);
-    socket.connect("tcp://localhost:5555");
-    zmq::message_t message;
-
+    // Устанавливаем соединение по ZMQ
+    ZmqReceiver receiver(config);
 
 
     while(true){
-        socket.recv(message);
-        nlohmann::json jsonData = nlohmann::json::parse(message.to_string());
+        nlohmann::json jsonData = receiver.receive();
 
         if (jsonData["info"]=="uskr_kgm"){
            //cam.updateJson(jsonData);
         }
-        else if (jsonData["info"]=="uskr_dso"){
+        else if (jsonData["info"]=="uskr_dso")
             sensor.triggerAlarm();  // Датчик срабатывает
-        }
-        else if (jsonData["info"]=="rco"){
+        else if (jsonData["info"]=="rco")
             circuit.activate();
-        }
-        else if (jsonData["info"]=="uskr_lasers"){
+        else if (jsonData["info"]=="uskr_lasers")
             laser.fire();
-        }
-        else if (typeid(jsonData["info"]) ==typeid(jsonData)){
-            camera.detectMotion();
-        }
-
+        else if (typeid(jsonData["info"]) ==typeid(jsonData))
+            camera.update(jsonData);
 
         //send_diagnostic()
         std::cout << "ECHO is alive" <<std::endl;
