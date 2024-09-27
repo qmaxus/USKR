@@ -11,11 +11,10 @@
 
 int main() {
     // Загрузка конфигурации
-    std::string config = ConfigLoader::loadConfig("config.json");
-    std::cout << "Loaded configuration: " << config << std::endl;
+    nlohmann::json config = ConfigLoader::loadConfig("config.json");
 
     // Создаем объекты камеры, датчика, цепи и лазера
-    Camera camera(&ConcreteMediator::getInstance(), "Camera1");
+    Camera camera(&ConcreteMediator::getInstance(), "Camera1",config);
     Sensor sensor(&ConcreteMediator::getInstance(), "Sensor1");
     Circuit circuit(&ConcreteMediator::getInstance(), "Circuit1");
     Laser laser(&ConcreteMediator::getInstance(), "Laser1");

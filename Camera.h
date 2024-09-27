@@ -11,7 +11,7 @@
 class Mediator; // Предварительное объявление
 
 
-struct UskrData {
+struct UskrNumber {
     std::string number;
     int quantity;
     std::vector<double> time;
@@ -39,11 +39,26 @@ struct Frame{
 };
 
 
+struct UskrData{
+    std::string info;
+	double time;
+	double probability;
+	std::map<int, int> cameraId;
+	std::vector<Frame> frames;
+	double timeMin;
+	double timeMax;
+	int cameraMiddle;
+	int axle;
+	int typeWagon;
+	double middlePosition;
+};
+
+
 struct UskrCouple{
 	double time;
 	double probability;
 	std::vector<int> camera;
-	std::vector<std::map<Frame>> frame;
+	std::vector<Frame> frames;
 	double timeMin;
 	double timeMax;
 	double limit;
@@ -70,9 +85,16 @@ private:
     Mediator* mediator;
     std::string name;
     std::map<std::string, UskrData> number;
+    std::vector<UskrData> couple;
+    const nlohmann::json& config;
 public:
-    Camera(Mediator* med, const std::string& n) : mediator(med), name(n) {}
+    //void setComponents(const std::string config_file){
+   //     config =config_file;
+   // }
+    Camera(Mediator* med, const std::string& n, const nlohmann::json& config_file) : mediator(med), name(n), config(config_file) {}
     void deleted(double timeEnd);
+    UskrData initDataRecognition(const nlohmann::json& json,std::string nameObject, double timeFrame, int idCam);
+    void updateDataRecognition(const nlohmann::json& json,std::string nameObject, double timeFrame, int idCam, UskrData& data);
     void update(const nlohmann::json& json);
     void print();
 };

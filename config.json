@@ -1,4 +1,8 @@
 {
+    "client": {
+        "4": {"limit_dso":[200,600]}
+    },
+
     "cameras": [
         {
             "name": "Camera1"
@@ -25,4 +29,4 @@
 				"ip_port_out":"tcp://127.0.0.1:5553"
 
 				}}
-}
+},

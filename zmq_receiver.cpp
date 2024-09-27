@@ -3,8 +3,7 @@
 #include <iostream>
 
 
-ZmqReceiver::ZmqReceiver(const std::string& config_file) {
-    nlohmann::json config = nlohmann::json::parse(config_file);
+ZmqReceiver::ZmqReceiver(const nlohmann::json& config) {
     endpoint_ = config["logic_sorted"]["1"]["ip_port_in"];
     context_ = zmq::context_t(1);
     socket_ = zmq::socket_t(context_, zmq::socket_type::pull);

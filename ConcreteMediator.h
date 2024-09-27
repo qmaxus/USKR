@@ -45,13 +45,13 @@ public:
     void notify(const std::string& sender, const std::string& event) override {
         TimeLastSend=getTime();
         if (event == "MotionDetected") {
-            std::cout << "Mediator reacts to motion detection." << std::endl;
-            camera->print();
+            //std::cout << "Mediator reacts to motion detection." << std::endl;
+            //camera->print();
             sensor->triggerAlarm();
             //circuit->activate();
             //laser->fire();
         } else if (event == "AlarmTriggered") {
-            std::cout << "Mediator reacts to alarm trigger." << std::endl;
+            //std::cout << "Mediator reacts to alarm trigger." << std::endl;
             camera->deleted(TimeLastSend);
             // Дополнительные действия при срабатывании тревоги
         } else if (event == "CircuitActivated") {

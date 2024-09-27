@@ -8,7 +8,7 @@
 
 class ZmqReceiver {
 public:
-    ZmqReceiver(const std::string& config_file);
+    ZmqReceiver(const nlohmann::json& config_file);
     ~ZmqReceiver();
 
     nlohmann::json receive();
