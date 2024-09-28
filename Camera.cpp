@@ -2,18 +2,25 @@
 #include "Mediator.h"
 
 void Camera::update(const nlohmann::json& json) {
-
+    std::cout<<"Number"<<" \n";
     //Number update
     for (const auto& value : json["info"]["number"]) {
+
+         std::cout<<"INIT"<<value["info"]<<number.count(value["info"])<<" \n";
          if (number.count(value["info"])>0)
+         {
+             std::cout<<"updateNumber"<<" \n";
              updateDataRecognition(value,value["info"], json["time"], json["id"], number[value["info"]]);
+         }
          else {
+            std::cout<<"INIT"<<" \n";
             UskrData data = initDataRecognition( value,value["info"], json["time"], json["id"]);
             number[value["info"]]=data;
+            std::cout<<"addd "<<value["info"]<<number.count(value["info"])<<" \n";
 
          }
     }
-
+     std::cout<<"Couple"<<" \n";
     //Couple update
     for (const auto& value : json["info"]["coupl"]) {
 
@@ -25,8 +32,11 @@ void Camera::update(const nlohmann::json& json) {
                 bool limitMax = std::abs(last_couple.timeMax - static_cast<double>(json["time"]) )< limitSecond;
                 bool limitMin = std::abs(last_couple.timeMax - static_cast<double>(json["time"]) )< limitSecond;
                 if ( last_couple.timeMin<= static_cast<double>(json["time"])<=last_couple.timeMax  || limitMax  ||  limitMin )
+                {
+                    std::cout<<"updateCouple"<<" \n";
                     updateDataRecognition(value,"couple", json["time"], json["id"], last_couple);
                     updateFlag =true;
+                }
             }
             if (!updateFlag) {
                 UskrData data=initDataRecognition(value,"couple", json["time"], json["id"]);
@@ -34,7 +44,7 @@ void Camera::update(const nlohmann::json& json) {
             }
     }
     //Mark update
-
+    std::cout<<"Mark"<<" \n";
     for (const auto& value : json["info"]["mark"]) {
         std::cout<<value<<" \n";
     }
@@ -67,20 +77,25 @@ Coordinate writePosition(const nlohmann::json& json,std::string nameObject){
 
 void Camera::updateDataRecognition(const nlohmann::json& json,std::string nameObject, double timeFrame, int idCam, UskrData& data)
 {
-    std::cout<<"----000000000----"<<std::endl;
+
     if (data.cameraId.count(idCam)>0)
-        ++data.cameraId[idCam];
+    {
+        data.cameraId[idCam]++;
+        std::cout<<"+++"<<" \n";
+    }
     else
+    {
+        std::cout<<"==1"<<" \n";
         data.cameraId[idCam]=1;
+    }
     Frame frame;
     frame.time = timeFrame;
-
     Coordinate coordinate = writePosition(json, nameObject);
-
-    if (typeid(json["trec"])==typeid(std::string))
+    if ( json["trec"].is_string())
         frame.typeRecognition = json["trec"];
     else
         frame.typeRecognition = static_cast<std::string>(json["trec"][0]);
+
     frame.probabilityFrame = json["p"];
     frame.coordinate = coordinate;
     data.frames.push_back(frame);
@@ -91,10 +106,9 @@ void Camera::updateDataRecognition(const nlohmann::json& json,std::string nameOb
 
     data.probability = (static_cast<double>(json["p"]) + data.probability)/2.0;
     double middleCouple = (coordinate.xMin + coordinate.xMax)/2.0;
-
-    double currentDistance = std::abs(calculateMean(config["client"][data.cameraMiddle]["limit_dso"]) - data.middlePosition);
-    double newDistance = std::abs(calculateMean(config["client"][idCam]["limit_dso"]) - middleCouple);
-
+    std::vector<double> middleDso = config["client"][std::to_string(data.cameraMiddle)]["limit_dso"];
+    double currentDistance = std::abs(calculateMean(middleDso) - data.middlePosition);
+    double newDistance = std::abs(calculateMean(config["client"][std::to_string(idCam)]["limit_dso"]) - middleCouple);
     if (currentDistance>newDistance){
         data.time = timeFrame;
         data.cameraMiddle = idCam;
@@ -111,21 +125,15 @@ UskrData Camera::initDataRecognition(const nlohmann::json& json,std::string name
     UskrData data;
     data.info = nameObject;
     data.time = timeFrame;
-
     data.probability=json["p"];
     data.cameraId[idCam] = 1;
     Frame frame;
     frame.time = timeFrame;
     Coordinate coordinate = writePosition(json, nameObject);
-
-    if (json["trec"].type() == nlohmann::json::string_t)
+    if ( json["trec"].is_string())
         frame.typeRecognition = json["trec"];
     else
-    {
-        std::cout<<"----000000000000----"<<json["trec"]<<std::endl;
         frame.typeRecognition = static_cast<std::string>(json["trec"][0]);
-    }
-
     frame.probabilityFrame = json["p"];
     frame.coordinate = coordinate;
     data.frames.push_back(frame);

@@ -46,13 +46,13 @@ public:
         TimeLastSend=getTime();
         if (event == "MotionDetected") {
             //std::cout << "Mediator reacts to motion detection." << std::endl;
-            //camera->print();
+            camera->print();
             sensor->triggerAlarm();
             //circuit->activate();
             //laser->fire();
         } else if (event == "AlarmTriggered") {
             //std::cout << "Mediator reacts to alarm trigger." << std::endl;
-            camera->deleted(TimeLastSend);
+           // camera->deleted(TimeLastSend);
             // Дополнительные действия при срабатывании тревоги
         } else if (event == "CircuitActivated") {
             std::cout << "Mediator reacts to circuit activation." << std::endl;
