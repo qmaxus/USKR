@@ -1,18 +1,24 @@
 #include "Sensor.h"
 #include "Mediator.h"
 
-void Sensor::triggerAlarm() {
-    std::cout << name << " DSO MSG." <<data.NumMessage << std::endl;
-    mediator->notify(name, "AlarmTriggered");
+void Sensor::dsoRun() {
+    mediator->notify(name, "SensorWork");
 }
 
+
+Data& Sensor::getData(){
+    return data;
+ }
+void Sensor::print() {
+    std::cout << name << " --DSO MSG." <<data.NumMessage << std::endl;
+}
+
+
 void Sensor::update(const nlohmann::json& j) {
-    std::cout << name << " update dso" <<j["c"]["NumMessage"]<< std::endl;
     data.NumMessage = j["c"]["NumMessage"];
     data.ModelVagons = j["c"]["ModelVagons"].get<std::vector<int>>();
 
     for (const auto& interval : j["c"]["ListIntervals"]) {
-
         Interval newInterval;
         newInterval.Dir = interval["Dir"];
         newInterval.IsFull = interval["IsFull"];
@@ -32,7 +38,6 @@ void Sensor::update(const nlohmann::json& j) {
             Axis newAxis;
             newAxis.NumAxis = axis["NumAxis"];
             newAxis.LastUpdate = axis["LastUpdate"];
-
             for (const auto& event : axis["ListEventsDso"]) {
                 Event newEvent;
                 newEvent.Time = event["Time"];
@@ -40,13 +45,10 @@ void Sensor::update(const nlohmann::json& j) {
                 newEvent.Direction = event["Direction"];
                 newAxis.ListEventsDso.push_back(newEvent);
             }
-
             newAxis.DistanceAxisLeft = axis["DistanceAxisLeft"]["TypeDistanceAxis"];
             newAxis.DistanceAxisRight = axis["DistanceAxisRight"]["TypeDistanceAxis"];
-
             newInterval.AxisList.push_back(newAxis);
         }
-
         for (const auto& realAxis : interval["AxisListReal"]) {
             Event newRealAxis;
             newRealAxis.Time = realAxis["Time"];
@@ -64,13 +66,11 @@ void Sensor::update(const nlohmann::json& j) {
             newInterval.realTimeCamInfo.Time_mean.values = interval["RealTimeCamInfo"]["Time_mean"]["values"].get<std::vector<long long>>();
             newInterval.realTimeCamInfo.Time_midle.id = interval["RealTimeCamInfo"]["Time_midle"]["id"];
             newInterval.realTimeCamInfo.Time_midle.values = interval["RealTimeCamInfo"]["Time_midle"]["values"].get<std::vector<long long>>();
-
         }
         data.ListIntervals.clear();
         data.ListIntervals.push_back(newInterval);
     }
-
     data.OutputStructs = j["c"]["OutputStructs"].get<std::vector<int>>();
-    std::cout << name << " ------stop update dso" << std::endl;
+    dsoRun();
 }
 

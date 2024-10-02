@@ -86,7 +86,10 @@ private:
 public:
     Sensor(Mediator* med, const std::string& n) : mediator(med), name(n) {}
     void update(const nlohmann::json& j);
-    void triggerAlarm();
+    void dsoRun();
+    void print();
+    Data& getData();
+
 };
 
 #endif // SENSOR_H

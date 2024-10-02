@@ -86,17 +86,18 @@ private:
     std::string name;
     std::map<std::string, UskrData> number;
     std::vector<UskrData> couple;
+    std::vector<UskrData> mark;
     const nlohmann::json& config;
 public:
-    //void setComponents(const std::string config_file){
-   //     config =config_file;
-   // }
     Camera(Mediator* med, const std::string& n, const nlohmann::json& config_file) : mediator(med), name(n), config(config_file) {}
     void deleted(double timeEnd);
     UskrData initDataRecognition(const nlohmann::json& json,std::string nameObject, double timeFrame, int idCam);
     void updateDataRecognition(const nlohmann::json& json,std::string nameObject, double timeFrame, int idCam, UskrData& data);
     void update(const nlohmann::json& json);
     void print();
+    UskrData getNumber(double timeStart, double timeEnd);
+    UskrData getCouple(double timeStart, double timeEnd);
+    UskrData getMark(double timeStart, double timeEnd);
 };
 
 #endif // CAMERA_H

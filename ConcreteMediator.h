@@ -1,6 +1,9 @@
 #ifndef CONCRETE_MEDIATOR_H
 #define CONCRETE_MEDIATOR_H
-
+#include <chrono>
+#include <ctime>
+#include <sstream>
+#include <string>
 #include <chrono>
 #include "Mediator.h"
 #include "Camera.h"
@@ -14,6 +17,27 @@ double getTime(){
                     static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() % 1000000) / 1000000.0;
     return unixTime;
  }
+
+double DatatimeToUnixtime(std::string datetimeString){
+
+    std::tm tm = {}; // Initialize tm structure
+    std::istringstream iss(datetimeString);
+    iss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S"); // Parse year, month, day, hour, minute, and second
+    iss >> std::setw(3) >> tm.tm_sec; // Parse milliseconds
+
+    std::time_t tt = mktime(&tm);
+    uint64_t unixTime = static_cast<uint64_t>(tt);
+
+    // Add the remaining milliseconds
+    unixTime *= 1000; // Convert seconds to milliseconds
+    unixTime += tm.tm_sec % 1000; // Add the remaining milliseconds
+    return unixTime;
+
+}
+
+
+
+
 
 
 class ConcreteMediator : public Mediator {
@@ -42,26 +66,50 @@ public:
         laser = las;
     }
 
+    void makeWagon(){
+        Data& data = sensor->getData();
+        for (Interval& dsoCouple: data.ListIntervals){
+            std::cout<<dsoCouple.StartDate<<std::endl;
+            double unixTimeStart = DatatimeToUnixtime(dsoCouple.StartDate);
+            double unixTimeEnd = DatatimeToUnixtime(dsoCouple.EndDate);
+            std::cout<<"unixTimeStart "<<unixTimeStart<<std::endl;
+            UskrData numberCurrent = camera->getNumber(1.2,1.2);
+            std::cout<<numberCurrent.info<<" t: "<<numberCurrent.time<<std::endl;
+            UskrData coupleCurrent = camera->getCouple(1.2,1.2);
+            std::cout<<coupleCurrent.info<<" t: "<<coupleCurrent.time<<std::endl;
+            UskrData markCurrent = camera->getMark(1.2,1.2);
+            std::cout<<markCurrent.info<<" t: "<<markCurrent.time<<std::endl;
+
+            std::cout<<dsoCouple.EndDate<<std::endl;
+
+        }
+    }
+
     void notify(const std::string& sender, const std::string& event) override {
         TimeLastSend=getTime();
-        if (event == "MotionDetected") {
+        if (event == "CameraDetected") {
             //std::cout << "Mediator reacts to motion detection." << std::endl;
-            camera->print();
-            sensor->triggerAlarm();
-            //circuit->activate();
-            //laser->fire();
-        } else if (event == "AlarmTriggered") {
-            //std::cout << "Mediator reacts to alarm trigger." << std::endl;
-           // camera->deleted(TimeLastSend);
-            // Дополнительные действия при срабатывании тревоги
+        } else if (event == "SensorWork") {
+             std::cout<<"-----start model------------------"<<std::endl;
+             //sensor->print();
+              makeWagon();
+             //camera->print();
+             std::cout<<"-----end model------------------"<<std::endl;
         } else if (event == "CircuitActivated") {
-            std::cout << "Mediator reacts to circuit activation." << std::endl;
+           // std::cout << "Mediator reacts to circuit activation." << std::endl;
             // Дополнительные действия при активации цепи
         } else if (event == "LaserFired") {
-            std::cout << "Mediator reacts to laser firing." << std::endl;
+            //std::cout << "Mediator reacts to laser firing." << std::endl;
             // Дополнительные действия при стрельбе лазера
         }
     }
+
+
+
+
+
+
+
 };
 
 #endif // CONCRETE_MEDIATOR_H

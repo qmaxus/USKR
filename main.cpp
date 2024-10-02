@@ -42,7 +42,7 @@ int main() {
             camera.update(jsonData);
 
         //send_diagnostic()
-        std::cout << "ECHO is alive" <<std::endl;
+        std::cout << "\t\t\ECHO is alive" <<std::endl;
 
 
 
