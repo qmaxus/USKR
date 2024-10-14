@@ -54,30 +54,6 @@ struct UskrData{
 };
 
 
-struct UskrCouple{
-	double time;
-	double probability;
-	std::vector<int> camera;
-	std::vector<Frame> frames;
-	double timeMin;
-	double timeMax;
-	double limit;
-	int cameraMiddle;
-	double middlePosition;
-};
-
-
-struct UskrMark {
-    std::string number;
-    int quantity;
-    std::vector<double> time;
-    double time_middle;
-    std::map<int, int> cameraId;
-    int type;
-    int axle;
-    bool change;
-    double timeMean;
-};
 
 
 class Camera {
@@ -95,9 +71,9 @@ public:
     void updateDataRecognition(const nlohmann::json& json,std::string nameObject, double timeFrame, int idCam, UskrData& data);
     void update(const nlohmann::json& json);
     void print();
-    UskrData getNumber(double timeStart, double timeEnd);
-    UskrData getCouple(double timeStart, double timeEnd);
-    UskrData getMark(double timeStart, double timeEnd);
+    std::map<std::string, UskrData> getNumber(double timeStart, double timeEnd);
+    std::vector<UskrData> getCouple(double timeStart, double timeEnd);
+    std::vector<UskrData> getMark(double timeStart, double timeEnd);
 };
 
 #endif // CAMERA_H

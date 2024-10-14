@@ -214,31 +214,67 @@ void Camera::print() {
 
 
 
-UskrData Camera::getNumber(double timeStart, double timeEnd){
+std::map<std::string, UskrData> Camera::getNumber(double startTime, double endTime){
 
-    for (auto& value : number)
-    {
-        auto& key = value.first;
-        auto& num = value.second;
-        return num;
+    std::map<std::string, UskrData>  extractedData;
+    for (const auto& pair : number) {
+        if (pair.second.time >= startTime && pair.second.time <= endTime) {
+            extractedData.insert(pair);
+        }
     }
-    UskrData returnData;
-    return returnData;
+
+
+    /*deleted
+         data.erase(std::remove_if(data.begin(), data.end(),
+                          [&startTime, &endTime](const auto& pair) {
+                              return pair.second.timestamp >= startTime && pair.second.timestamp <= endTime;
+                          }),
+         data.end());*/
+
+    return extractedData;
 
 }
 
-UskrData Camera::getCouple(double timeStart, double timeEnd){
-     UskrData returnData;
-     for (UskrData& value : couple)
-        return value;
-     return returnData;
+std::vector<UskrData> Camera::getCouple(double startTime, double endTime){
+     std::vector<UskrData> extractedData;
+
+     for (const auto& dp : couple) {
+            if (dp.time >= startTime && dp.time <= endTime) {
+                extractedData.emplace_back(dp);
+    }
 }
 
-UskrData Camera::getMark(double timeStart, double timeEnd){
-     UskrData returnData;
-     for (UskrData& value : mark)
-        return value;
-     return returnData;
+     /*
+
+    for (auto it = data.begin(); it != data.end();) {
+        if (it->timestamp >= startTime && it->timestamp <= endTime) {
+            extractedData.push_back(*it);
+            it = data.erase(it);
+        } else {
+            ++it;
+        }
+    }*/
+    /*std::vector<Data> extractedData = data;
+
+    data.erase(std::remove_if(data.begin(), data.end(),
+                              [&startTime, &endTime](const auto& element) {
+                                  return element.timestamp >= startTime && element.timestamp <= endTime;
+                              }),
+               data.end());*/
+
+
+
+
+     return extractedData;
+}
+
+std::vector<UskrData>  Camera::getMark(double startTime, double endTime){
+     std::vector<UskrData> extractedData;
+     for (const auto& dp : mark) {
+            if (dp.time >= startTime && dp.time <= endTime)
+                extractedData.emplace_back(dp);
+    }
+     return extractedData;
 }
 
 

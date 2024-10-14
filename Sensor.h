@@ -53,6 +53,7 @@ struct StateScepka {
 // Interval structure
 struct Interval {
     int Dir;
+    bool IsLastVagon;
     bool IsFull;
     std::string EndDate;
     std::vector<Axis> AxisList;

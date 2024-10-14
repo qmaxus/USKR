@@ -18,24 +18,49 @@ double getTime(){
     return unixTime;
  }
 
-double DatatimeToUnixtime(std::string datetimeString){
-
-    std::tm tm = {}; // Initialize tm structure
-    std::istringstream iss(datetimeString);
-    iss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S"); // Parse year, month, day, hour, minute, and second
-    iss >> std::setw(3) >> tm.tm_sec; // Parse milliseconds
-
-    std::time_t tt = mktime(&tm);
-    uint64_t unixTime = static_cast<uint64_t>(tt);
-
-    // Add the remaining milliseconds
-    unixTime *= 1000; // Convert seconds to milliseconds
-    unixTime += tm.tm_sec % 1000; // Add the remaining milliseconds
-    return unixTime;
-
+double stringToUnixTime(const std::string& str) {
+    // Parse the string into a time_point
+    std::tm tm = {};
+    std::istringstream ss(str.substr(0, 19)); // Remove the fractional second part
+    ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
+    if (ss.fail()) {
+        throw std::runtime_error("Failed to parse time string");
+    }
+    // Convert the time_point to Unix time in seconds
+    auto tp = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+    auto seconds = std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count();
+    // Add the fractional second part
+    auto fractionalSeconds = std::stod(str.substr(20)); // Get the fractional second part
+    double milliseconds = seconds  + fractionalSeconds/1000;
+    return milliseconds;
 }
 
 
+struct Msg{
+            /*"time":msg.time,
+            "info": msg.info,
+            "dct":msg.dct,
+            "vel": msg.vel,
+            "axle":msg.axle,
+            "info_status":msg.info_status,
+            "type": msg.typeModel,
+            "type_vgn": msg.type_vgn,
+            "cargoType": msg.cargoType,
+            "inv":*/
+            double time;
+            int dct;
+            int axle;
+            int info_status;
+            std::string typeModel;
+            int type_vgn;
+            int status;
+            double TimeAxis;
+            int NumAxis;
+            double vel;
+            std::string info;
+            int cargoType;
+            std::string inv;
+}
 
 
 
@@ -65,23 +90,82 @@ public:
         circuit = cir;
         laser = las;
     }
+    double getTimeCouple( std::vector<Interval>& ListIntervalCouple, int account, int QuantityCouple ){
+        double endTime = stringToUnixTime(ListIntervalCouple[account].EndDate);
+        if (account<QuantityCouple-1){
+            double StartTimeNext = stringToUnixTime(ListIntervalCouple[account+1].StartDate);
+            endTime = (endTime + StartTimeNext)/2;
+        }
+        else{
+            endTime += 5;
+        }
+        return endTime;
+    }
+
+
+
 
     void makeWagon(){
         Data& data = sensor->getData();
-        for (Interval& dsoCouple: data.ListIntervals){
-            std::cout<<dsoCouple.StartDate<<std::endl;
-            double unixTimeStart = DatatimeToUnixtime(dsoCouple.StartDate);
-            double unixTimeEnd = DatatimeToUnixtime(dsoCouple.EndDate);
-            std::cout<<"unixTimeStart "<<unixTimeStart<<std::endl;
-            UskrData numberCurrent = camera->getNumber(1.2,1.2);
-            std::cout<<numberCurrent.info<<" t: "<<numberCurrent.time<<std::endl;
-            UskrData coupleCurrent = camera->getCouple(1.2,1.2);
-            std::cout<<coupleCurrent.info<<" t: "<<coupleCurrent.time<<std::endl;
-            UskrData markCurrent = camera->getMark(1.2,1.2);
-            std::cout<<markCurrent.info<<" t: "<<markCurrent.time<<std::endl;
+        int QuantityCouple = data.ListIntervals.size();
+        std::cout<<"------------------NUmmesssage: "<<data.NumMessage<<"--------------------------\n";
+        double TimeLastSend = 0.0;
 
-            std::cout<<dsoCouple.EndDate<<std::endl;
+        for (int i=0; i<QuantityCouple;i++){
 
+            double startTime = stringToUnixTime(data.ListIntervals[i].StartDate);
+            double endTime = stringToUnixTime(data.ListIntervals[i].EndDate);
+            double endTimeNext = getTimeCouple(data.ListIntervals,i,QuantityCouple);
+            std::cout<<"\tDSO timeStart: "<<startTime<<" EndTime: "<<endTime<<" NextTimer: "<<endTimeNext<<"\n";
+
+            // std::cout<<startTime<<std::endl;
+            std::map<std::string, UskrData> numberReturn;
+            numberReturn = camera->getNumber(startTime, endTimeNext);
+            std::vector<UskrData> coupleCurrent = camera->getCouple(startTime, endTimeNext);
+            std::vector<UskrData> markCurrent = camera->getMark(startTime, endTimeNext);
+
+
+             std::cout<<"\tDSO vagon: "<<"Raliabilty:"<<data.ListIntervals[i].Reliability<<" axle: "<<data.ListIntervals[i].CountAxis<<"\n";
+             for (const auto& pair1 : numberReturn)
+                {
+                std::stringstream ss;
+                for (const auto& pair : pair1.second.cameraId) {
+                    ss << "Key: " << pair.first << ", Value: " << pair.second << " | ";
+                }
+
+                 std::string mapAsString = ss.str();
+                 std::cout<<"\tNumber vagon: "<<pair1.second.info<<" probability: "<<pair1.second.probability<<" Time: "<<pair1.second.time<<"MINT: "<<pair1.second.timeMin<<" MAXT: "<<pair1.second.timeMax<<"ID cam: "<< mapAsString<<"\n";
+             }
+             for (const auto& couple : coupleCurrent)
+                std::cout<<"\tCouple vagon: "<<couple.info<<" probability: "<<couple.probability<<" Time: "<<couple.time<<"\n";
+             for (const auto& mark : markCurrent)
+                std::cout<<"\tMark vagon: "<<mark.info<<" probability: "<<mark.probability<<" Time: "<<mark.time<<"\n";
+
+             if (data.ListIntervals[i].Reliability==0){
+                std::cout<<"\t\t>>>>>>>>>>>>Send vagon: "<<data.ListIntervals[i].Reliability<<" | "<<data.ListIntervals[i].EndDate<<std::endl;
+
+                    msg = {"time":msg.time,
+                           "info": msg.info,
+                           "dct":msg.dct,
+                           "vel": msg.vel,
+                           "axle":msg.axle,
+                           "info_status":msg.info_status,
+                           "type": msg.typeModel,
+                           "type_vgn": msg.type_vgn,
+                           "cargoType": msg.cargoType,
+                           "inv": msg.inv}
+                    MyStruct myStruct = {1, "John", 3.14};
+                    nlohmann::json json = myStruct;
+             }
+             else {
+
+
+
+
+
+             }
+             if (data.ListIntervals[i].IsLastVagon)
+                 std::cout<<"----ENd--------------IsLastVagon: "<<data.ListIntervals[i].IsLastVagon<<"\n";
         }
     }
 
@@ -90,17 +174,11 @@ public:
         if (event == "CameraDetected") {
             //std::cout << "Mediator reacts to motion detection." << std::endl;
         } else if (event == "SensorWork") {
-             std::cout<<"-----start model------------------"<<std::endl;
-             //sensor->print();
               makeWagon();
-             //camera->print();
-             std::cout<<"-----end model------------------"<<std::endl;
         } else if (event == "CircuitActivated") {
-           // std::cout << "Mediator reacts to circuit activation." << std::endl;
-            // Дополнительные действия при активации цепи
+            // std::cout << "Mediator reacts to circuit activation." << std::endl;
         } else if (event == "LaserFired") {
             //std::cout << "Mediator reacts to laser firing." << std::endl;
-            // Дополнительные действия при стрельбе лазера
         }
     }
 
@@ -113,3 +191,5 @@ public:
 };
 
 #endif // CONCRETE_MEDIATOR_H
+
+

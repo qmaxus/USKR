@@ -10,6 +10,7 @@
 
 
 int main() {
+    std::cout << std::fixed <<std::endl;
     // Загрузка конфигурации
     nlohmann::json config = ConfigLoader::loadConfig("config.json");
 
@@ -28,7 +29,7 @@ int main() {
 
     while(true){
         nlohmann::json jsonData = receiver.receive();
-
+       // std::cout<<jsonData<<std::endl;
         if (jsonData["info"]=="uskr_kgm"){
            //cam.updateJson(jsonData);
         }
@@ -38,11 +39,13 @@ int main() {
             circuit.activate();
         else if (jsonData["info"]=="uskr_lasers")
             laser.fire();
+         else if (jsonData["info"]=="rtds")
+            laser.fire();
         else if (typeid(jsonData["info"]) ==typeid(jsonData))
             camera.update(jsonData);
 
         //send_diagnostic()
-        std::cout << "\t\t\ECHO is alive" <<std::endl;
+        //std::cout << "\t\tECHO is alive" <<std::endl;
 
 
 

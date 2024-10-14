@@ -17,10 +17,11 @@ void Sensor::print() {
 void Sensor::update(const nlohmann::json& j) {
     data.NumMessage = j["c"]["NumMessage"];
     data.ModelVagons = j["c"]["ModelVagons"].get<std::vector<int>>();
-
+    data.ListIntervals.clear();
     for (const auto& interval : j["c"]["ListIntervals"]) {
         Interval newInterval;
         newInterval.Dir = interval["Dir"];
+        newInterval.IsLastVagon = interval["IsLastVagon"];
         newInterval.IsFull = interval["IsFull"];
         newInterval.EndDate = interval["EndDate"];
         newInterval.CountAxis = interval["CountAxis"];
@@ -67,7 +68,7 @@ void Sensor::update(const nlohmann::json& j) {
             newInterval.realTimeCamInfo.Time_midle.id = interval["RealTimeCamInfo"]["Time_midle"]["id"];
             newInterval.realTimeCamInfo.Time_midle.values = interval["RealTimeCamInfo"]["Time_midle"]["values"].get<std::vector<long long>>();
         }
-        data.ListIntervals.clear();
+
         data.ListIntervals.push_back(newInterval);
     }
     data.OutputStructs = j["c"]["OutputStructs"].get<std::vector<int>>();
