@@ -62,6 +62,27 @@ struct Msg{
             std::string inv;
 }
 
+enum Reliability{
+    Sure = 0,
+    NotSure = 1,
+    End  = 777,
+    Empty =666
+};
+
+enum TypeWagon{
+    Locomative = 1,
+    NotSure = 3,
+    Wagon = 0,
+    NonStandard =2
+};
+
+enum Direction{
+    Left = 1,
+    Right = 0,
+    Unknown = 2
+};
+
+
 
 
 
@@ -110,23 +131,26 @@ public:
         int QuantityCouple = data.ListIntervals.size();
         std::cout<<"------------------NUmmesssage: "<<data.NumMessage<<"--------------------------\n";
         double TimeLastSend = 0.0;
-
+        double endTime = 0.0;
         for (int i=0; i<QuantityCouple;i++){
 
-            double startTime = stringToUnixTime(data.ListIntervals[i].StartDate);
-            double endTime = stringToUnixTime(data.ListIntervals[i].EndDate);
+            double StartData = stringToUnixTime(data.ListIntervals[i].StartDate);
+            double EndDate = stringToUnixTime(data.ListIntervals[i].EndDate);
+            double MinTime = TimeLastSend;
             double endTimeNext = getTimeCouple(data.ListIntervals,i,QuantityCouple);
-            std::cout<<"\tDSO timeStart: "<<startTime<<" EndTime: "<<endTime<<" NextTimer: "<<endTimeNext<<"\n";
-
-            // std::cout<<startTime<<std::endl;
-            std::map<std::string, UskrData> numberReturn;
-            numberReturn = camera->getNumber(startTime, endTimeNext);
-            std::vector<UskrData> coupleCurrent = camera->getCouple(startTime, endTimeNext);
-            std::vector<UskrData> markCurrent = camera->getMark(startTime, endTimeNext);
+           // std::cout<<"\tDSO timeStart: "<<startTime<<" EndTime: "<<endTime<<" NextTimer: "<<endTimeNext<<"\n";
+            TimeLastSend =  endTimeNext;
 
 
-             std::cout<<"\tDSO vagon: "<<"Raliabilty:"<<data.ListIntervals[i].Reliability<<" axle: "<<data.ListIntervals[i].CountAxis<<"\n";
-             for (const auto& pair1 : numberReturn)
+
+            //std::map<std::string, UskrData> numberReturn;
+            std::map<std::string, UskrData> numberReturn = camera->getNumber(MinTime, endTimeNext);
+            std::vector<UskrData> coupleCurrent = camera->getCouple(EndData, endTimeNext);
+            std::vector<UskrData> markCurrent = camera->getMark(StartData, endTimeNext);
+
+
+            std::cout<<"\tDSO vagon: "<<"Raliabilty:"<<data.ListIntervals[i].Reliability<<" axle: "<<data.ListIntervals[i].CountAxis<<"\n";
+            for (const auto& pair1 : numberReturn)
                 {
                 std::stringstream ss;
                 for (const auto& pair : pair1.second.cameraId) {
@@ -135,13 +159,33 @@ public:
 
                  std::string mapAsString = ss.str();
                  std::cout<<"\tNumber vagon: "<<pair1.second.info<<" probability: "<<pair1.second.probability<<" Time: "<<pair1.second.time<<"MINT: "<<pair1.second.timeMin<<" MAXT: "<<pair1.second.timeMax<<"ID cam: "<< mapAsString<<"\n";
-             }
-             for (const auto& couple : coupleCurrent)
-                std::cout<<"\tCouple vagon: "<<couple.info<<" probability: "<<couple.probability<<" Time: "<<couple.time<<"\n";
-             for (const auto& mark : markCurrent)
-                std::cout<<"\tMark vagon: "<<mark.info<<" probability: "<<mark.probability<<" Time: "<<mark.time<<"\n";
+            }
+            for (const auto& couple : coupleCurrent)
+               std::cout<<"\tCouple vagon: "<<couple.info<<" probability: "<<couple.probability<<" Time: "<<couple.time<<"\n";
+            for (const auto& mark : markCurrent)
+               std::cout<<"\tMark vagon: "<<mark.info<<" probability: "<<mark.probability<<" Time: "<<mark.time<<"\n";
 
-             if (data.ListIntervals[i].Reliability==0){
+            bool  EmptyAxle = (data.ListIntervals[i].Reliability==Reliability.Empty && data.ListIntervals[i].CountAxis>5);
+            if (data.ListIntervals[i].Reliability!=Reliability.Empty  || EmptyAxle){
+                if (data.ListIntervals[i].IsLastVagon || endTime==0.0)
+                    if (endTime==0.0)
+                        endTime = EndDate> endTime? EndDate : endTime;
+                    else
+                        endTime = EndDate;
+
+                int sumAxleNumbers = std::accumulate(numberReturn.begin(), numberReturn.end(), 0,
+                [](int accumulator, const std::pair<std::string, UskrData>& pair) {
+                    return accumulator + pair.second.axle;
+                });
+
+                bool IsNumber = (data.ListIntervals[i].CountAxis==sumAxleNumbers);
+                bool IsCouple = (coupleCurrent.size()>0 || data.ListIntervals[i].Reliability!=Reliability.NotSure);
+                bool IsSure = data.ListIntervals[i].Reliability!=Reliability.Sure
+                if (IsSure  || (IsCouple && IsNumber))
+                   if (data.ListIntervals[i].Dir==Direction.Unknown)
+                    SERR
+                   if  ( || IsSure)
+
                 std::cout<<"\t\t>>>>>>>>>>>>Send vagon: "<<data.ListIntervals[i].Reliability<<" | "<<data.ListIntervals[i].EndDate<<std::endl;
 
                     msg = {"time":msg.time,
@@ -156,16 +200,16 @@ public:
                            "inv": msg.inv}
                     MyStruct myStruct = {1, "John", 3.14};
                     nlohmann::json json = myStruct;
-             }
-             else {
+            }
+            else {
 
 
 
 
 
-             }
-             if (data.ListIntervals[i].IsLastVagon)
-                 std::cout<<"----ENd--------------IsLastVagon: "<<data.ListIntervals[i].IsLastVagon<<"\n";
+            }
+            if (data.ListIntervals[i].IsLastVagon)
+                std::cout<<"----ENd--------------IsLastVagon: "<<data.ListIntervals[i].IsLastVagon<<"\n";
         }
     }
 
