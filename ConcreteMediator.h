@@ -10,6 +10,7 @@
 #include "Sensor.h"
 #include "Circuit.h"
 #include "Laser.h"
+#include "Graf.h"
 
 double getTime(){
     auto now = std::chrono::high_resolution_clock::now();
@@ -207,9 +208,21 @@ public:
             //std::cout << "Mediator reacts to motion detection." << std::endl;
         } else if (event == "SensorWork") {
               makeWagon();
-
-        } else if (event == "CircuitActivated") {
-            // std::cout << "Mediator reacts to circuit activation." << std::endl;
+              int numNeurons = 1; // Количество нейронов
+              Graph graph(numNeurons);
+              graph.addEdge(0, 4, 101);
+              vector<int> predecessors;
+              vector<float> distances = graph.bellmanFord(startNeuron, predecessors);
+               if (!distances.empty()) {
+                cout << "Расстояние от нейрона " << startNeuron << " до нейрона " << endNeuron << ": ";
+                if (distances[endNeuron] == numeric_limits<float>::max()) {
+                    cout << "Бесконечность" << endl;
+                } else {
+                    cout << distances[endNeuron] << endl;
+                    printPath(startNeuron, endNeuron, predecessors); // Выводим путь
+                }
+                } else if (event == "CircuitActivated") {
+                    // std::cout << "Mediator reacts to circuit activation." << std::endl;
         } else if (event == "LaserFired") {
             //std::cout << "Mediator reacts to laser firing." << std::endl;
         }

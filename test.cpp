@@ -5,14 +5,14 @@
 
 using namespace std;
 
-// Структура для представления рёбер графа
+
 struct Edge {
     int source;      // Исходная вершина (нейрон)
     int destination; // Конечная вершина (нейрон)
     float weight;    // Вес ребра (сила связи)
 };
 
-// Класс для представления графа
+
 class Graph {
 public:
     Graph(int vertices);
@@ -20,8 +20,8 @@ public:
     vector<float> bellmanFord(int start, vector<int>& predecessors);
 
 private:
-    int vertices; // Количество нейронов (вершин)
-    vector<Edge> edges; // Список рёбер
+    int vertices;
+    vector<Edge> edges;
 };
 
 // Конструктор
@@ -54,7 +54,6 @@ vector<float> Graph::bellmanFord(int start, vector<int>& predecessors) {
         }
         }
     }
-
     return distance; // Возвращаем массив расстояний
  }
 
@@ -76,16 +75,18 @@ void printPath(int start, int end, const vector<int>& predecessors) {
     cout << endl;
 }
 
+
+
 int main() {
     int numNeurons = 5; // Количество нейронов
     Graph graph(numNeurons);
 
     // Добавляем рёбра (нейрон1, нейрон2, вес)
-    graph.addEdge(0, 1, 0.5); // Сила связи между нейронами 0 и 1
-    graph.addEdge(0, 2, 2.0); // Сила связи между нейронами 0 и 2 graph.addEdge(1, 2, 1.0); // Сила связи между нейронами 1 и 2
-    graph.addEdge(1, 3, 0.1); // Сила связи между нейронами 1 и 3 graph.addEdge(2, 1, 0.5); // Сила связи между нейронами 2 и 1
-    graph.addEdge(2, 3, -2.5); // Сила связи между нейронами 2 и 3 graph.addEdge(2, 4, 1.0); // Сила связи между нейронами 2 и 4
-    graph.addEdge(3, 4, 0.0); // Сила связи между нейронами 3 и 4 int startNeuron, endNeuron;
+    graph.addEdge(0, 4, 101); // Сила связи между нейронами 0 и 1
+    graph.addEdge(0, 2,  60); // Сила связи между нейронами 0 и 2 graph.addEdge(1, 2, 1.0); // Сила связи между нейронами 1 и 2
+    graph.addEdge(1, 3, 10); // Сила связи между нейронами 1 и 3 graph.addEdge(2, 1, 0.5); // Сила связи между нейронами 2 и 1
+    graph.addEdge(2, 3, 30); // Сила связи между нейронами 2 и 3 graph.addEdge(2, 4, 1.0); // Сила связи между нейронами 2 и 4
+    graph.addEdge(3, 4, 10); // Сила связи между нейронами 3 и 4 int startNeuron, endNeuron;
 
     cout << "Введите начальный нейрон (0-" << numNeurons - 1 << "): ";
     int startNeuron;
@@ -97,7 +98,8 @@ int main() {
     vector<int> predecessors;
     vector<float> distances = graph.bellmanFord(startNeuron, predecessors);
 
-    // Выводим результаты if (!distances.empty()) {
+    // Выводим результаты
+    if (!distances.empty()) {
         cout << "Расстояние от нейрона " << startNeuron << " до нейрона " << endNeuron << ": ";
         if (distances[endNeuron] == numeric_limits<float>::max()) {
             cout << "Бесконечность" << endl;
@@ -106,8 +108,9 @@ int main() {
             printPath(startNeuron, endNeuron, predecessors); // Выводим путь
         }
 
-   return 0;
-    }
+
+}
+return 0;}
 
 
 
