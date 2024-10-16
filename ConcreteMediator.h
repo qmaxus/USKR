@@ -196,12 +196,18 @@ public:
         }
     }
 
+    void makeGraf(){
+
+
+    }
+
     void notify(const std::string& sender, const std::string& event) override {
         TimeLastSend=getTime();
         if (event == "CameraDetected") {
             //std::cout << "Mediator reacts to motion detection." << std::endl;
         } else if (event == "SensorWork") {
               makeWagon();
+
         } else if (event == "CircuitActivated") {
             // std::cout << "Mediator reacts to circuit activation." << std::endl;
         } else if (event == "LaserFired") {
