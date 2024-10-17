@@ -8,7 +8,7 @@ socket.bind("tcp://*:5555")
 
 
 import json, ast,base64
-
+arr = []
 with open('add_recevide data.log', 'r') as f:
     json_data = []
     for line in f:

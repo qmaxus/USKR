@@ -1,6 +1,5 @@
 #ifndef GRAF_H
 #define GRAF_H
-/*
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -17,10 +16,9 @@ class Graph {
 public:
     Graph(int vertices);
     void addEdge(int source, int destination, float weight);
-    vector<float> bellmanFord(int start, vector<int>& predecessors);
+    std::vector<float> bellmanFord(int start, std::vector<int>& predecessors);
 private:
     int vertices;
-    vector<Edge> edges;
+    std::vector<Edge> edges;
 };
-*/
 #endif // GRAF_H
