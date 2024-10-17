@@ -26,19 +26,6 @@ def cut_info(arr, ar_cam, ar_coupl,memory_number_frame_annot, number_event, send
         ar_coupl, new_coupl = checkio(ar_coupl, convert_time(x['StartDate']),y_max)
         lasers_coupl =[laser for laser in lasers_arr if x['StartDate']<laser['c']['time']<y_max]
 
-        log_utils.logstat(f"    **num time   : {y_min}  {y_max}", "graf", DEBUG=False)
-        log_utils.logstat(f"    **coupl time : { convert_time(x['StartDate'])} {y_max}", "graf", DEBUG=False)
-        log_utils.logstat(f"    --num        : { new_number}", "graf", DEBUG=False)
-        log_utils.logstat(f"    --coupl      : { new_coupl}", "graf", DEBUG=False)
-        log_utils.logstat(f"    --CountAxis : {x['CountAxis']}", "graf", DEBUG=False)
-        log_utils.logstat(f"    --Reliability : {x['Reliability']}", "graf", DEBUG=False)
-        log_utils.logstat(f"    --Dir : {x['Dir']}", "graf", DEBUG=False)
-        log_utils.logstat(f"    --send_dso_number : {send_dso_number}", "graf", DEBUG=False)
-        log_utils.logstat(f"    --laser  : {[(lsr['c']['msg'],lsr['c']['time']) for lsr in lasers_coupl]}", "graf", DEBUG=False)
-        log_utils.logstat(f"    --account_axle : {account_axle}", "graf", DEBUG=False)
-        log_utils.logstat(f"    --IsLastVagon : {x['IsLastVagon']}", "graf", DEBUG=False)
-
-
         x['num'] =  new_number
         x['coupl'] = new_coupl
         x['flag'] = False
@@ -93,12 +80,7 @@ def cut_info(arr, ar_cam, ar_coupl,memory_number_frame_annot, number_event, send
                     x['status_vgn'] = coupl_plus + number_plus
                     x['flag'] = True
                     account_axle = account_axle-x['CountAxis']
-                    if len(x['AxisList'])>0:
-                        w = max(x['AxisList'], key=lambda p: p[1])
-                        x['num_axis'] = (max(w[5]),w[1] )
-                        if check_availabil(send_dso_number,x['num_axis']):
-                            log_utils.logstat(f"h: {x['CountAxis']} {x}", "move_send_graf", DEBUG=False)
-                            log_utils.logstat(f"           move {x['CountAxis']}", "graf", DEBUG=False)
+
 
                 elif  len(x['AxisList'])==0:
                     i+=1

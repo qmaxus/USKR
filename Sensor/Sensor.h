@@ -65,6 +65,10 @@ struct Interval {
     int TypeVagonByDso;
     RealTimeCamInfo realTimeCamInfo;
     int TypeReliability;
+    int MaxIndexAxle;
+    int MinIndexAxle;
+    bool StatusWagon;
+    int StatusRecognition;
 };
 
 // Main data structure

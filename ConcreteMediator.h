@@ -10,6 +10,7 @@
 #include "Sensor.h"
 #include "Circuit.h"
 #include "Laser.h"
+#include "Graf.h"
 
 double getTime(){
     auto now = std::chrono::high_resolution_clock::now();
@@ -62,6 +63,19 @@ struct Msg{
             std::string inv;
 }
 
+enum Reliability{
+    Sure = 0,
+    NotSure = 1,
+    End  = 777,
+    Empty =666
+};
+
+enum TypeWagon{
+    Locomative = 1,
+    NotSure = 3,
+    Wagon = 0,
+    NonStandard =2
+};
 
 
 
@@ -71,7 +85,9 @@ private:
     Sensor* sensor;
     Circuit* circuit;
     Laser* laser;
-    double TimeLastSend;
+    double TimeLastSend{0.0};
+    int AccountAxle{0};
+    int LastIndexSendDso{0};
 
     // Приватный конструктор для реализации одиночки
     ConcreteMediator() : camera(nullptr), sensor(nullptr), circuit(nullptr), laser(nullptr) {}
@@ -96,77 +112,107 @@ public:
             double StartTimeNext = stringToUnixTime(ListIntervalCouple[account+1].StartDate);
             endTime = (endTime + StartTimeNext)/2;
         }
-        else{
+        else
             endTime += 5;
-        }
         return endTime;
     }
 
 
-
-
-    void makeWagon(){
-        Data& data = sensor->getData();
-        int QuantityCouple = data.ListIntervals.size();
-        std::cout<<"------------------NUmmesssage: "<<data.NumMessage<<"--------------------------\n";
-        double TimeLastSend = 0.0;
-
-        for (int i=0; i<QuantityCouple;i++){
-
-            double startTime = stringToUnixTime(data.ListIntervals[i].StartDate);
-            double endTime = stringToUnixTime(data.ListIntervals[i].EndDate);
-            double endTimeNext = getTimeCouple(data.ListIntervals,i,QuantityCouple);
-            std::cout<<"\tDSO timeStart: "<<startTime<<" EndTime: "<<endTime<<" NextTimer: "<<endTimeNext<<"\n";
-
-            // std::cout<<startTime<<std::endl;
-            std::map<std::string, UskrData> numberReturn;
-            numberReturn = camera->getNumber(startTime, endTimeNext);
-            std::vector<UskrData> coupleCurrent = camera->getCouple(startTime, endTimeNext);
-            std::vector<UskrData> markCurrent = camera->getMark(startTime, endTimeNext);
-
-
-             std::cout<<"\tDSO vagon: "<<"Raliabilty:"<<data.ListIntervals[i].Reliability<<" axle: "<<data.ListIntervals[i].CountAxis<<"\n";
-             for (const auto& pair1 : numberReturn)
+    void PrintComponent(Data& data, int i,std::map<std::string, UskrData>& numberReturn,std::vector<UskrData>& coupleCurrent, std::vector<UskrData>& markCurrent){
+            std::cout<<"\tDSO vagon: "<<"Raliabilty:"<<data.ListIntervals[i].Reliability<<" axle: "<<data.ListIntervals[i].CountAxis<<"\n";
+            for (const auto& pair1 : numberReturn)
                 {
                 std::stringstream ss;
                 for (const auto& pair : pair1.second.cameraId) {
                     ss << "Key: " << pair.first << ", Value: " << pair.second << " | ";
                 }
-
                  std::string mapAsString = ss.str();
                  std::cout<<"\tNumber vagon: "<<pair1.second.info<<" probability: "<<pair1.second.probability<<" Time: "<<pair1.second.time<<"MINT: "<<pair1.second.timeMin<<" MAXT: "<<pair1.second.timeMax<<"ID cam: "<< mapAsString<<"\n";
-             }
-             for (const auto& couple : coupleCurrent)
-                std::cout<<"\tCouple vagon: "<<couple.info<<" probability: "<<couple.probability<<" Time: "<<couple.time<<"\n";
-             for (const auto& mark : markCurrent)
-                std::cout<<"\tMark vagon: "<<mark.info<<" probability: "<<mark.probability<<" Time: "<<mark.time<<"\n";
+            }
+            for (const auto& couple : coupleCurrent)
+               std::cout<<"\tCouple vagon: "<<couple.info<<" probability: "<<couple.probability<<" Time: "<<couple.time<<"\n";
+            for (const auto& mark : markCurrent)
+               std::cout<<"\tMark vagon: "<<mark.info<<" probability: "<<mark.probability<<" Time: "<<mark.time<<"\n";
 
-             if (data.ListIntervals[i].Reliability==0){
-                std::cout<<"\t\t>>>>>>>>>>>>Send vagon: "<<data.ListIntervals[i].Reliability<<" | "<<data.ListIntervals[i].EndDate<<std::endl;
+    }
 
-                    msg = {"time":msg.time,
-                           "info": msg.info,
-                           "dct":msg.dct,
-                           "vel": msg.vel,
-                           "axle":msg.axle,
-                           "info_status":msg.info_status,
-                           "type": msg.typeModel,
-                           "type_vgn": msg.type_vgn,
-                           "cargoType": msg.cargoType,
-                           "inv": msg.inv}
-                    MyStruct myStruct = {1, "John", 3.14};
-                    nlohmann::json json = myStruct;
-             }
-             else {
+    void makeWagon(){
+        Data& data = sensor->getData();
+       // int QuantityCouple = data.ListIntervals.size();
+        std::cout<<"------------------NUmmesssage: "<<data.NumMessage<<"--------------------------\n";
 
 
+        double endTime = 0.0;
+        bool flagRun = false;
 
+        int CheckOrderDsoCouple = 0;
+        for (int i=0; i<data.ListIntervals.size();i++){
 
+            double StartData = stringToUnixTime(data.ListIntervals[i].StartDate);
+            double EndDate = stringToUnixTime(data.ListIntervals[i].EndDate);
+            double MinTime = TimeLastSend;
+            double endTimeNext = getTimeCouple(data.ListIntervals,i,QuantityCouple);
+            TimeLastSend =  endTimeNext;
 
-             }
-             if (data.ListIntervals[i].IsLastVagon)
-                 std::cout<<"----ENd--------------IsLastVagon: "<<data.ListIntervals[i].IsLastVagon<<"\n";
+            std::map<std::string, UskrData> numberReturn = camera->getNumber(MinTime, endTimeNext);
+            std::vector<UskrData> coupleCurrent = camera->getCouple(EndData, endTimeNext);
+            std::vector<UskrData> markCurrent = camera->getMark(StartData, endTimeNext);
+
+            PrintComponent(data, i, numberReturn, coupleCurrent,  markCurrent);
+
+            bool  EmptyAxle = (data.ListIntervals[i].Reliability==Reliability.Empty && data.ListIntervals[i].CountAxis>5);
+            if (data.ListIntervals[i].Reliability!=Reliability.Empty  || EmptyAxle){
+                if (data.ListIntervals[i].IsLastVagon || endTime==0.0)
+                    if (endTime==0.0)
+                        endTime = EndDate> endTime? EndDate : endTime;
+                    else
+                        endTime = EndDate;
+
+                int sumAxleNumbers = std::accumulate(numberReturn.begin(), numberReturn.end(), 0,
+                [](int accumulator, const std::pair<std::string, UskrData>& pair) {
+                    return accumulator + pair.second.axle;});
+
+                bool IsNumber = (data.ListIntervals[i].CountAxis==sumAxleNumbers);
+                bool IsCouple = (coupleCurrent.size()>0 || data.ListIntervals[i].Reliability!=Reliability.NotSure);
+                bool IsSure = data.ListIntervals[i].Reliability!=Reliability.Sure
+                if (IsSure  || (IsCouple && IsNumber))
+                    if  ( data.ListIntervals[i].CountAxis>0 || IsSure)
+                        if (LastIndexSendDso >= data.ListIntervals[i].MinIndexAxle)
+                           flagRun = false;
+                    int RestAxle =  AccountAxle-data.ListIntervals[i].CountAxis;
+                    bool CheckRestAxle = (RestAxle > 0 || endTime > 0.0);
+                    if  data.ListIntervals[i].CountAxis > 0 && CheckOrderDsoCouple == i && flagRun && CheckRestAxle:
+                        CheckOrderDsoCouple++;
+                        data.ListIntervals[i].StatusWagon = true;
+                        AccountAxle = RestAxle;
+                        data.ListIntervals[i].StatusRecognition = coupleCurrent.size() + numberReturn.size();
+
+                   else if (data.ListIntervals[i].CountAxis==0)
+                         CheckOrderDsoCouple++;
+                else if (data.ListIntervals[i].CountAxis==0 && IsSequenceViolation){
+                    IsSequenceViolation = false;
+                    CheckOrderDsoCouple++;
+                }
+            }
         }
+    }
+
+    void makeGraf(){
+                 int numNeurons = 1; // Количество нейронов
+              Graph graph(numNeurons);
+              graph.addEdge(0, 4, 101);
+              vector<int> predecessors;
+              vector<float> distances = graph.bellmanFord(startNeuron, predecessors);
+               if (!distances.empty()) {
+                cout << "Расстояние от нейрона " << startNeuron << " до нейрона " << endNeuron << ": ";
+                if (distances[endNeuron] == numeric_limits<float>::max()) {
+                    cout << "Бесконечность" << endl;
+                } else {
+                    cout << distances[endNeuron] << endl;
+                    printPath(startNeuron, endNeuron, predecessors); // Выводим путь
+                }
+
+
     }
 
     void notify(const std::string& sender, const std::string& event) override {
@@ -175,8 +221,10 @@ public:
             //std::cout << "Mediator reacts to motion detection." << std::endl;
         } else if (event == "SensorWork") {
               makeWagon();
+              makeGraf();
+
         } else if (event == "CircuitActivated") {
-            // std::cout << "Mediator reacts to circuit activation." << std::endl;
+                    // std::cout << "Mediator reacts to circuit activation." << std::endl;
         } else if (event == "LaserFired") {
             //std::cout << "Mediator reacts to laser firing." << std::endl;
         }

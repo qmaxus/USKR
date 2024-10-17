@@ -14,6 +14,21 @@ void Sensor::print() {
 }
 
 
+enum Direction{
+    Left = 1,
+    Right = 0,
+    Unknown = 2
+};
+
+
+
+
+template <typename K, typename V>
+V maxElement(std::map<K, V>& map, const V& defaultValue){
+    return map.empty()? defaultValue :std::max_element(map.begin(), map.end(),
+    [](const auto& a, const auto& b){return a.second < b.second;})->second;
+}
+
 void Sensor::update(const nlohmann::json& j) {
     data.NumMessage = j["c"]["NumMessage"];
     data.ModelVagons = j["c"]["ModelVagons"].get<std::vector<int>>();
@@ -35,21 +50,41 @@ void Sensor::update(const nlohmann::json& j) {
             newInterval.stateScepka.NumAxis = interval["StateScepka"]["NumAxis"];
             newInterval.stateScepka.NumMessage = interval["StateScepka"]["NumMessage"];
         }
+        std::map<int,int > maxAccountDir;
+        int MaxIndexAxle;
+        int MinIndexAxle;
         for (const auto& axis : interval["AxisList"]) {
             Axis newAxis;
             newAxis.NumAxis = axis["NumAxis"];
+            if(newAxis.NumAxis < MinIndexAxle)
+                MinIndexAxle = newAxis.NumAxis;
+            if(newAxis.NumAxis > MaxIndexAxle)
+                MaxIndexAxle = newAxis.NumAxis;
+
             newAxis.LastUpdate = axis["LastUpdate"];
             for (const auto& event : axis["ListEventsDso"]) {
                 Event newEvent;
                 newEvent.Time = event["Time"];
                 newEvent.NumAxis = event["NumAxis"];
                 newEvent.Direction = event["Direction"];
+                if (newEvent.Direction!=Direction.Unknown){
+                    if (maxAccountDir.count(newEvent.Direction) > 0)
+                         maxAccountDir[newEvent.Direction]++;
+                    else
+                        maxAccountDir[newEvent.Direction] =1;
+                }
                 newAxis.ListEventsDso.push_back(newEvent);
             }
             newAxis.DistanceAxisLeft = axis["DistanceAxisLeft"]["TypeDistanceAxis"];
             newAxis.DistanceAxisRight = axis["DistanceAxisRight"]["TypeDistanceAxis"];
             newInterval.AxisList.push_back(newAxis);
         }
+        if (newInterval.Dir == Direction.Unknown)
+            newInterval.Dir = maxElement(maxAccountDir, Direction.Unknown)
+
+        newInterval.MaxIndexAxle = MaxIndexAxle;
+        newInterval.MinIndexAxle = MinIndexAxle;
+
         for (const auto& realAxis : interval["AxisListReal"]) {
             Event newRealAxis;
             newRealAxis.Time = realAxis["Time"];
