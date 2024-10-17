@@ -198,17 +198,7 @@ public:
     }
 
     void makeGraf(){
-
-
-    }
-
-    void notify(const std::string& sender, const std::string& event) override {
-        TimeLastSend=getTime();
-        if (event == "CameraDetected") {
-            //std::cout << "Mediator reacts to motion detection." << std::endl;
-        } else if (event == "SensorWork") {
-              makeWagon();
-              int numNeurons = 1; // Количество нейронов
+                 int numNeurons = 1; // Количество нейронов
               Graph graph(numNeurons);
               graph.addEdge(0, 4, 101);
               vector<int> predecessors;
@@ -221,7 +211,19 @@ public:
                     cout << distances[endNeuron] << endl;
                     printPath(startNeuron, endNeuron, predecessors); // Выводим путь
                 }
-                } else if (event == "CircuitActivated") {
+
+
+    }
+
+    void notify(const std::string& sender, const std::string& event) override {
+        TimeLastSend=getTime();
+        if (event == "CameraDetected") {
+            //std::cout << "Mediator reacts to motion detection." << std::endl;
+        } else if (event == "SensorWork") {
+              makeWagon();
+              makeGraf();
+
+        } else if (event == "CircuitActivated") {
                     // std::cout << "Mediator reacts to circuit activation." << std::endl;
         } else if (event == "LaserFired") {
             //std::cout << "Mediator reacts to laser firing." << std::endl;
