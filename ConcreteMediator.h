@@ -6,11 +6,13 @@
 #include <string>
 #include <chrono>
 #include "Mediator.h"
-#include "Camera.h"
-#include "Sensor.h"
-#include "Circuit.h"
-#include "Laser.h"
-#include "Graf.h"
+#include "Camera/Camera.h"
+#include "Sensor/Sensor.h"
+#include "Circuit/Circuit.h"
+#include "Laser/Laser.h"
+#include "NeuralGraf/Graf.h"
+
+
 
 double getTime(){
     auto now = std::chrono::high_resolution_clock::now();
@@ -61,7 +63,7 @@ struct Msg{
             std::string info;
             int cargoType;
             std::string inv;
-}
+};
 
 enum Reliability{
     Sure = 0,
@@ -72,7 +74,7 @@ enum Reliability{
 
 enum TypeWagon{
     Locomative = 1,
-    NotSure = 3,
+    NotKnown = 3,
     Wagon = 0,
     NonStandard =2
 };
@@ -88,6 +90,7 @@ private:
     double TimeLastSend{0.0};
     int AccountAxle{0};
     int LastIndexSendDso{0};
+    bool IsSequenceViolation{true};
 
     // Приватный конструктор для реализации одиночки
     ConcreteMediator() : camera(nullptr), sensor(nullptr), circuit(nullptr), laser(nullptr) {}
@@ -138,7 +141,7 @@ public:
 
     void makeWagon(){
         Data& data = sensor->getData();
-       // int QuantityCouple = data.ListIntervals.size();
+        int QuantityCouple = data.ListIntervals.size();
         std::cout<<"------------------NUmmesssage: "<<data.NumMessage<<"--------------------------\n";
 
 
@@ -155,13 +158,13 @@ public:
             TimeLastSend =  endTimeNext;
 
             std::map<std::string, UskrData> numberReturn = camera->getNumber(MinTime, endTimeNext);
-            std::vector<UskrData> coupleCurrent = camera->getCouple(EndData, endTimeNext);
+            std::vector<UskrData> coupleCurrent = camera->getCouple(EndDate, endTimeNext);
             std::vector<UskrData> markCurrent = camera->getMark(StartData, endTimeNext);
 
             PrintComponent(data, i, numberReturn, coupleCurrent,  markCurrent);
 
-            bool  EmptyAxle = (data.ListIntervals[i].Reliability==Reliability.Empty && data.ListIntervals[i].CountAxis>5);
-            if (data.ListIntervals[i].Reliability!=Reliability.Empty  || EmptyAxle){
+            bool  EmptyAxle = (data.ListIntervals[i].Reliability==Empty && data.ListIntervals[i].CountAxis>5);
+            if (data.ListIntervals[i].Reliability!=Empty  || EmptyAxle){
                 if (data.ListIntervals[i].IsLastVagon || endTime==0.0)
                     if (endTime==0.0)
                         endTime = EndDate> endTime? EndDate : endTime;
@@ -173,22 +176,23 @@ public:
                     return accumulator + pair.second.axle;});
 
                 bool IsNumber = (data.ListIntervals[i].CountAxis==sumAxleNumbers);
-                bool IsCouple = (coupleCurrent.size()>0 || data.ListIntervals[i].Reliability!=Reliability.NotSure);
-                bool IsSure = data.ListIntervals[i].Reliability!=Reliability.Sure
-                if (IsSure  || (IsCouple && IsNumber))
+                bool IsCouple = (coupleCurrent.size()>0 || data.ListIntervals[i].Reliability!=NotSure);
+                bool IsSure = data.ListIntervals[i].Reliability!=Sure;
+                if (IsSure  || (IsCouple && IsNumber)){
                     if  ( data.ListIntervals[i].CountAxis>0 || IsSure)
                         if (LastIndexSendDso >= data.ListIntervals[i].MinIndexAxle)
                            flagRun = false;
                     int RestAxle =  AccountAxle-data.ListIntervals[i].CountAxis;
                     bool CheckRestAxle = (RestAxle > 0 || endTime > 0.0);
-                    if  data.ListIntervals[i].CountAxis > 0 && CheckOrderDsoCouple == i && flagRun && CheckRestAxle:
+                    if ( data.ListIntervals[i].CountAxis > 0 && CheckOrderDsoCouple == i && flagRun && CheckRestAxle){
                         CheckOrderDsoCouple++;
                         data.ListIntervals[i].StatusWagon = true;
                         AccountAxle = RestAxle;
                         data.ListIntervals[i].StatusRecognition = coupleCurrent.size() + numberReturn.size();
-
+                    }
                    else if (data.ListIntervals[i].CountAxis==0)
                          CheckOrderDsoCouple++;
+                }
                 else if (data.ListIntervals[i].CountAxis==0 && IsSequenceViolation){
                     IsSequenceViolation = false;
                     CheckOrderDsoCouple++;
@@ -198,7 +202,7 @@ public:
     }
 
     void makeGraf(){
-                 int numNeurons = 1; // Количество нейронов
+               /*  int numNeurons = 1; // Количество нейронов
               Graph graph(numNeurons);
               graph.addEdge(0, 4, 101);
               vector<int> predecessors;
@@ -210,7 +214,7 @@ public:
                 } else {
                     cout << distances[endNeuron] << endl;
                     printPath(startNeuron, endNeuron, predecessors); // Выводим путь
-                }
+                }*/
 
 
     }

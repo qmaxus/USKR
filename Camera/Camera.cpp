@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "Mediator.h"
+#include "../Mediator.h"
 
 
 // Decorator function to alter or rename keys in JSON data

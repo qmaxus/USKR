@@ -1,7 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
-project(MyProject)
 
-find_package(nlohmann_json CONFIG REQUIRED)
+# Укажите имя проекта
+project(USKR)
 
-add_executable(my_program main.cpp)
-target_link_libraries(my_program PRIVATE nlohmann_json::nlohmann_json)
+# Укажите стандарт C++
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Укажите пути к библиотекам
+include_directories(${CMAKE_SOURCE_DIR}/I/path/to/nlohmann/json.hpp) # Путь к nlohmann/json
+include_directories(${CMAKE_SOURCE_DIR}/my_library/zmq)      # Путь к заголовочным файлам ZeroMQ
+
+# Добавьте исполняемый файл
+add_executable(my_program main.cpp my_library/my_library.cpp)
+
+# Линковка с библиотеками ZeroMQ
+find_package(ZeroMQ REQUIRED)
+target_link_libraries(my_program zmq)
