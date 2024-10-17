@@ -1,5 +1,7 @@
 #include "Sensor.h"
-#include "Mediator.h"
+#include "../Mediator.h"
+#include <map>
+#include <algorithm>
 
 void Sensor::dsoRun() {
     mediator->notify(name, "SensorWork");
@@ -23,10 +25,10 @@ enum Direction{
 
 
 
-template <typename K, typename V>
-V maxElement(std::map<K, V>& map, const V& defaultValue){
-    return map.empty()? defaultValue :std::max_element(map.begin(), map.end(),
-    [](const auto& a, const auto& b){return a.second < b.second;})->second;
+
+int maxElement(std::map<int, int>& map, int defaultValue){
+return map.empty()? defaultValue : std::max_element(map.begin(), map.end(),
+[](const auto& a, const auto& b){return a.second < b.second;})->second;
 }
 
 void Sensor::update(const nlohmann::json& j) {
@@ -67,7 +69,7 @@ void Sensor::update(const nlohmann::json& j) {
                 newEvent.Time = event["Time"];
                 newEvent.NumAxis = event["NumAxis"];
                 newEvent.Direction = event["Direction"];
-                if (newEvent.Direction!=Direction.Unknown){
+                if (newEvent.Direction!=Unknown){
                     if (maxAccountDir.count(newEvent.Direction) > 0)
                          maxAccountDir[newEvent.Direction]++;
                     else
@@ -79,8 +81,8 @@ void Sensor::update(const nlohmann::json& j) {
             newAxis.DistanceAxisRight = axis["DistanceAxisRight"]["TypeDistanceAxis"];
             newInterval.AxisList.push_back(newAxis);
         }
-        if (newInterval.Dir == Direction.Unknown)
-            newInterval.Dir = maxElement(maxAccountDir, Direction.Unknown)
+        if (newInterval.Dir == Unknown)
+            newInterval.Dir = maxElement(maxAccountDir, Unknown);
 
         newInterval.MaxIndexAxle = MaxIndexAxle;
         newInterval.MinIndexAxle = MinIndexAxle;

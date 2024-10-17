@@ -1,18 +1,18 @@
 #include <zmq.hpp>
 #include <typeinfo>
-#include "Camera.h"
-#include "Sensor.h"
-#include "Circuit.h"
-#include "Laser.h"
+#include "Camera/Camera.h"
+#include "Sensor/Sensor.h"
+#include "Circuit/Circuit.h"
+#include "Laser/Laser.h"
 #include "ConcreteMediator.h"
-#include "ConfigLoader.h"
-#include "zmq_receiver.h"
+#include "ConfigLoader/ConfigLoader.h"
+#include "ZmqRecSend/zmq_receiver.h"
 
 
 int main() {
     std::cout << std::fixed <<std::endl;
     // Загрузка конфигурации
-    nlohmann::json config = ConfigLoader::loadConfig("config.json");
+    nlohmann::json config = ConfigLoader::loadConfig("ConfigLoader/config.json");
 
     // Создаем объекты камеры, датчика, цепи и лазера
     Camera camera(&ConcreteMediator::getInstance(), "Camera1",config);

@@ -2,7 +2,36 @@
 #include <vector>
 #include <limits>
 #include <stack>
+#include <map>
+#include <map>
+#include <algorithm> // Include this header for std::max_element
 
+template <typename K, typename V>
+V maxElement(std::map<K, V>& map, const V& defaultValue){
+return map.empty()? defaultValue : std::max_element(map.begin(), map.end(),
+[](const auto& a, const auto& b){return a.second < b.second;})->second;
+}
+
+
+
+
+int main() {
+    std::map<int,int > myMap;
+
+    myMap[1]= 1;
+    myMap[0]= 2;
+    myMap[2] = 3;
+
+    int defaultValue = 0;
+    int maxValue = maxElement(myMap, defaultValue);
+
+    std::cout << "Максимальное значение: " << maxValue << std::endl;
+
+    return 0;
+}
+
+
+/*
 using namespace std;
 
 
@@ -117,3 +146,4 @@ return 0;}
 
 
 
+*/

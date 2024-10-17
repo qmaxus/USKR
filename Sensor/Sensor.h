@@ -9,11 +9,14 @@
 
 using json = nlohmann::json;
 
+
 // Tag structure
 struct Tag {
     int id;
     std::vector<long long> values;
 };
+
+
 
 // RealTimeCamInfo structure
 struct RealTimeCamInfo {

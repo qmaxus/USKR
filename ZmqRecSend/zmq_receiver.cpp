@@ -17,6 +17,6 @@ ZmqReceiver::~ZmqReceiver() {
 
 nlohmann::json ZmqReceiver::receive() {
     zmq::message_t msg;
-    socket_.recv(msg);
+    zmq::recv_result_t result = socket_.recv(msg);
     return nlohmann::json::parse(msg.to_string());
 }

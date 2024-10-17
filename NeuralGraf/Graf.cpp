@@ -1,5 +1,6 @@
+/*
 #include "Graf.h"
-#include "Mediator.h"
+#include "../Mediator.h"
 
 // Конструктор
 Graph::Graph(int vertices) : vertices(vertices) {}
@@ -32,4 +33,4 @@ vector<float> Graph::bellmanFord(int start, vector<int>& predecessors) {
         }
     }
     return distance; // Возвращаем массив расстояний
- }
+ }*/

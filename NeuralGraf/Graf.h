@@ -1,6 +1,6 @@
 #ifndef GRAF_H
 #define GRAF_H
-
+/*
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -22,5 +22,5 @@ private:
     int vertices;
     vector<Edge> edges;
 };
-
+*/
 #endif // GRAF_H
