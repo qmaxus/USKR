@@ -2,7 +2,6 @@
 #include "../Mediator.h"
 
 
-
 // Конструктор
 Graph::Graph(int vertices) : vertices(vertices) {}
 
@@ -13,6 +12,8 @@ void Graph::addEdge(int source, int destination, float weight) {
 
 // Метод алгоритма Беллмана-Форда
 std::vector<float> Graph::bellmanFord(int start, std::vector<int>& predecessors) {
+
+
     std::vector<float> distance(vertices, std::numeric_limits<float>::max());
     distance[start] = 0; // Расстояние до стартовой вершины равно 0
     predecessors.assign(vertices, -1); // Инициализация предшественников
@@ -35,3 +36,5 @@ std::vector<float> Graph::bellmanFord(int start, std::vector<int>& predecessors)
     }
     return distance; // Возвращаем массив расстояний
  }
+
+

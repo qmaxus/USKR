@@ -202,19 +202,25 @@ public:
     }
 
     void makeGraf(){
-               /*  int numNeurons = 1; // Количество нейронов
+              int numNeurons = 3; // Количество нейронов
               Graph graph(numNeurons);
-              graph.addEdge(0, 4, 101);
-              vector<int> predecessors;
-              vector<float> distances = graph.bellmanFord(startNeuron, predecessors);
+              graph.addEdge(0, 2, 101);
+              graph.addEdge(0, 1, 11);
+              graph.addEdge(1, 2, 10);
+              int startNeuron = 0;
+              int endNeuron = 2;
+              std::vector<int> predecessors;
+              std::vector<float> distances = graph.bellmanFord(startNeuron, predecessors);
                if (!distances.empty()) {
-                cout << "Расстояние от нейрона " << startNeuron << " до нейрона " << endNeuron << ": ";
-                if (distances[endNeuron] == numeric_limits<float>::max()) {
-                    cout << "Бесконечность" << endl;
-                } else {
-                    cout << distances[endNeuron] << endl;
-                    printPath(startNeuron, endNeuron, predecessors); // Выводим путь
-                }*/
+                    if (distances[endNeuron] == std::numeric_limits<float>::max()) {
+                        std::cout << "Бесконечность" << std::endl;
+                    } else {
+                        std::cout << distances[endNeuron] << std::endl;
+                        for in
+                        std::cout << "startNeuron: "  <<startNeuron<<"endNeuron: "<<endNeuron<<"predecessors: "<<predecessors<< std::endl;
+                       // printPath(startNeuron, endNeuron, predecessors); // Выводим путь
+                    }
+               }
 
 
     }
@@ -225,7 +231,10 @@ public:
             //std::cout << "Mediator reacts to motion detection." << std::endl;
         } else if (event == "SensorWork") {
               makeWagon();
-              makeGraf();
+              if (AccountAxle>6)
+                  //prepareData();
+                  makeGraf();
+
 
         } else if (event == "CircuitActivated") {
                     // std::cout << "Mediator reacts to circuit activation." << std::endl;
